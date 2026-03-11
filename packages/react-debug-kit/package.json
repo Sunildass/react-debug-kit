@@ -1,0 +1,22 @@
+{
+  "name": "react-debug-kit",
+  "version": "0.1.0",
+  "description": "Core engine for React Debug Kit — overlay engine, fiber inspector, event bus, hotkey manager",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "vitest": "^1.6.0"
+  },
+  "sideEffects": false,
+  "license": "MIT"
+}

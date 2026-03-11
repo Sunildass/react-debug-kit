@@ -1,0 +1,23 @@
+{
+  "name": "react-live-inspect",
+  "version": "0.1.0",
+  "description": "Live component inspector for React — hover highlight and click-to-inspect",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "react-debug-kit": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "sideEffects": false,
+  "license": "MIT"
+}

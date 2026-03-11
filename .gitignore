@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+docs/
+
+# Build Output
+dist/
+build/
+lib/
+out/
+
+# Local Environment Files
+.env
+.env.local
+.env.development
+.env.production
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# Editor and IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+
+# Temporary Files
+.cache/
+.tmp/
+temp/
+coverage/
+
+# Playground Build Output
+apps/playground/dist
+apps/playground/build
