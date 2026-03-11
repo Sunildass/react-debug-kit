@@ -17,9 +17,9 @@ By integrating seamlessly with the React Fiber tree, React Debug Kit gives you d
 
 ---
 
-## Visual Demo
+## Sub-modules
 
-The toolkit provides **visual debugging tools directly inside React applications**.
+The toolkit provides the following **debugging modules directly inside your React applications**.
 
 ### Live Component Inspector
 
