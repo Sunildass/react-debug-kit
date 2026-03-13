@@ -138,13 +138,34 @@ export function findSuspenseBoundaries(rootElement: HTMLElement): SuspenseBounda
 
       // Find the nearest DOM element for positioning
       let nearestElement: HTMLElement | null = null;
-      let childFiber = fiber.child;
-      while (childFiber) {
-        if (childFiber.stateNode instanceof HTMLElement) {
-          nearestElement = childFiber.stateNode;
-          break;
-        }
-        childFiber = childFiber.child;
+      
+      // When suspended, `fiber.memoizedState` represents the fallback state.
+      // The actual rendered fallback fiber is typically `fiber.child.sibling` 
+      // or `fiber.child` depending on React version, but we just need ANY DOM node
+      // rendered by this boundary to attach our overlay to.
+      
+      const searchForDOM = (node: any, depth = 0): HTMLElement | null => {
+        if (!node || depth > 20) return null;
+        if (node.stateNode instanceof HTMLElement) return node.stateNode;
+        
+        let found = searchForDOM(node.child, depth + 1);
+        if (found) return found;
+        
+        return searchForDOM(node.sibling, depth);
+      };
+
+      // In React 18, the child is often an Offscreen component.
+      // The fallback is usually a sibling of that child.
+      let searchRoot = fiber.child;
+      if (isSuspended && fiber.child && fiber.child.sibling) {
+        searchRoot = fiber.child.sibling;
+      }
+      
+      nearestElement = searchForDOM(searchRoot);
+      
+      // If we still haven't found it, try searching the entire subtree of the Suspense fiber
+      if (!nearestElement) {
+        nearestElement = searchForDOM(fiber.child);
       }
 
       // Try to get a meaningful name from the parent component

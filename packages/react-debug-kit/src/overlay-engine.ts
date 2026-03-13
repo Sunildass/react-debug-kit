@@ -27,10 +27,11 @@ function ensureOverlayRoot(): HTMLDivElement {
     position: "fixed",
     top: "0",
     left: "0",
-    width: "0",
-    height: "0",
+    width: "100%",
+    height: "100%",
     zIndex: "2147483646",
     pointerEvents: "none",
+    overflow: "visible",
   });
   document.body.appendChild(overlayRoot);
   return overlayRoot;

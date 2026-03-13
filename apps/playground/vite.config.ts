@@ -10,4 +10,16 @@ export default defineConfig({
   define: {
     "process.env.NODE_ENV": JSON.stringify("development"),
   },
+  resolve: {
+    dedupe: ["react", "react-dom"],
+  },
+  optimizeDeps: {
+    exclude: [
+      "react-debug-kit",
+      "react-live-inspect",
+      "react-render-reason",
+      "react-suspense-debugger",
+      "react-layout-debugger"
+    ],
+  },
 });

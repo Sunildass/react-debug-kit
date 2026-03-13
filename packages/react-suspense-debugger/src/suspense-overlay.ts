@@ -8,12 +8,13 @@ import {
   showSuspenseBoundary,
   removeSuspenseBoundary,
   removeAllSuspenseBoundaries,
-  findSuspenseBoundaries,
 } from "react-debug-kit";
+import { scanSuspenseBoundaries } from "./suspense-scanner";
 import type { EventMap } from "react-debug-kit";
 
 let unsubscribers: (() => void)[] = [];
 let overlayPollId: ReturnType<typeof setInterval> | null = null;
+let renderedBoundaryIds = new Set<string>();
 
 function handleFallbackStarted(payload: EventMap["suspense_fallback_started"]): void {
   if (!payload) return;
@@ -49,28 +50,38 @@ export function startSuspenseOverlay(rootElement: HTMLElement): void {
   // Poll to update overlay positions
   overlayPollId = setInterval(() => {
     try {
-      const boundaries = findSuspenseBoundaries(rootElement);
+      const boundaries = scanSuspenseBoundaries(rootElement);
 
+      const activeSuspendedIds = new Set<string>();
       for (const boundary of boundaries) {
-        if (boundary.isSuspended && boundary.nearestElement) {
-          const rect = boundary.nearestElement.getBoundingClientRect();
-          if (rect.width > 0 && rect.height > 0) {
-            const fiberToBoundaryId = (boundary as any).fiber;
-            // Use fiber identity for ID — use component name as part of a stable ID
-            const boundaryId = `suspense-overlay-${boundary.componentName}`;
-            showSuspenseBoundary(
-              boundaryId,
-              rect,
-              `⏳ ${boundary.componentName}`,
-              "pending"
-            );
+        if (boundary.isSuspended) {
+          activeSuspendedIds.add(boundary.boundaryId);
+          if (boundary.nearestElement) {
+            const rect = boundary.nearestElement.getBoundingClientRect();
+            if (rect.width > 0 && rect.height > 0) {
+              showSuspenseBoundary(
+                boundary.boundaryId,
+                rect,
+                `⏳ ${boundary.componentName}`,
+                "pending"
+              );
+              renderedBoundaryIds.add(boundary.boundaryId);
+            }
           }
         }
       }
-    } catch {
+
+      // Cleanup boundaries that are no longer suspended
+      for (const id of renderedBoundaryIds) {
+        if (!activeSuspendedIds.has(id)) {
+          removeSuspenseBoundary(id);
+          renderedBoundaryIds.delete(id);
+        }
+      }
+    } catch (e) {
       // fiber tree may be mid-render
     }
-  }, 200);
+  }, 150);
 }
 
 /**
